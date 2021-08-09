@@ -193,7 +193,7 @@ public class VentaServiceImpl implements VentaService {
 		
 		actualItem.setCantidad(item.getCantidad());
 		
-		actualItem = itemService.save(actualItem);
+		actualItem = itemService.update(actualItem);
 		
 		return venta;
 	}

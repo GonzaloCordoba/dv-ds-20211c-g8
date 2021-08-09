@@ -15,8 +15,7 @@
 				<tr>
 					<th><a href="/tienda">Volver al menú pricipal</a></th>
 					<th>&nbsp;</th>
-					<th><a href="/tienda/ventas/efectivo/new">Crear una nueva Venta Efectivo</a></th>
-					<th><a href="/tienda/ventas/tarjeta/new">Crear una nueva Venta Tarjeta</a></th>
+					<th><a href="/tienda/ventas/new">Crear una nueva Venta</a></th>
 				</tr>
 			</tbody>
 		</table>
@@ -39,7 +38,7 @@
 					<td th:text="${venta.importeFinalStr}" style="text-align:right;">Importe Final</td>
 					<td><a th:href="@{'/tienda/ventas/edit/' + ${venta.id}}">Editar</a>
 						&nbsp;&nbsp;&nbsp; 
- 						<a th:href="@{'/tienda/ventas/delete/' + ${venta.id}}">Borrar</a>
+<!-- 						<a th:href="@{'/tienda/ventas/delete/' + ${venta.id}}">Borrar</a> -->
 					</td>
 				</tr>
 			</tbody>

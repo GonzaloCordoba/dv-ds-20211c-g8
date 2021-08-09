@@ -1,6 +1,6 @@
 package ar.edu.davinci.dvds20211cg8.controller.view;
 
-import java.util.Optional;
+//import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.davinci.dvds20211cg8.controller.TiendaApp;
 import ar.edu.davinci.dvds20211cg8.domain.Venta;
+import ar.edu.davinci.dvds20211cg8.domain.VentaEfectivo;
+import ar.edu.davinci.dvds20211cg8.domain.VentaTarjeta;
 import ar.edu.davinci.dvds20211cg8.exception.BusinessException;
+import ar.edu.davinci.dvds20211cg8.service.ClienteService;
+import ar.edu.davinci.dvds20211cg8.service.PrendaService;
 import ar.edu.davinci.dvds20211cg8.service.VentaService;
 
 @Controller
@@ -31,6 +35,12 @@ private final Logger LOGGER = LoggerFactory.getLogger(VentaController.class);
 	
 	@Autowired
 	private VentaService ventaService;
+	
+	@Autowired
+	private ClienteService clienteService;
+	
+	@Autowired
+	private PrendaService prendaService;
 	
 	
 	@GetMapping(path = "ventas/list")
@@ -47,26 +57,52 @@ private final Logger LOGGER = LoggerFactory.getLogger(VentaController.class);
 		return "ventas/list_ventas";
 	}
 	
-	@GetMapping(path = "/ventas/new")
-	public String showNewVentaPage(Model model) {
-		LOGGER.info("GET - showNewVentaPage - /ventas/new");
-//		Venta venta = new Venta();
-//		model.addAttribute("venta", venta);
-//		model.addAttribute("tipoVentas", ventaService.getTipoVentas());
-//
-//		LOGGER.info("ventas: " + venta.toString());
+	
+	@GetMapping(path = "ventas/tarjeta/new")
+	public String showNewVentaTarjetaPage(Model model) {
+		LOGGER.info("GET - showNewVentaPage - /ventas/tarjeta/new");
+		Venta venta = new VentaTarjeta();
+		model.addAttribute("venta", venta);
+		model.addAttribute("cliente", clienteService.listAll());
+		model.addAttribute("listPrendas", prendaService.list());
 
-		return "ventas/new_ventas";
+		LOGGER.info("ventas: " + venta.toString());
+
+		return "ventas/new_ventas_tarjeta";
 	}
 	
-	@PostMapping(value = "/ventas/save")
-	public String saveVenta(@ModelAttribute("venta") Venta venta) {
+	@GetMapping(path = "ventas/efectivo/new")
+	public String showNewVentaEfectivoPage(Model model) {
+		LOGGER.info("GET - showNewVentaPage - /ventas/efectivo/new");
+		Venta venta = new VentaEfectivo();
+		
+		model.addAttribute("venta", venta);
+		model.addAttribute("cliente", clienteService.listAll());
+		model.addAttribute("listPrendas", prendaService.list());
+
+		LOGGER.info("ventas: " + venta.toString());
+
+		return "ventas/new_ventas_efectivo";
+	}
+	
+	@PostMapping(value = "/ventas/efectivo/save")
+	public String saveVenta(@ModelAttribute("venta") VentaEfectivo venta) throws BusinessException {
 		LOGGER.info("POST - saveVenta - /ventas/save");
 		LOGGER.info("venta: " + venta.toString());
-//		ventaService.save(venta);
+		ventaService.save(venta);
 
 		return "redirect:/tienda/ventas/list";
 	}
+	
+	@PostMapping(value = "/ventas/tarjeta/save")
+	public String saveVenta(@ModelAttribute("venta") VentaTarjeta venta) throws BusinessException {
+		LOGGER.info("POST - saveVenta - /ventas/save");
+		LOGGER.info("venta: " + venta.toString());
+		ventaService.save(venta);
+
+		return "redirect:/tienda/ventas/list";
+	}
+	
 	
 	@RequestMapping(value = "/ventas/edit/{id}", method = RequestMethod.GET)
 	public ModelAndView showEditVentaPage(@PathVariable(name = "id") Long ventaId) {
@@ -78,6 +114,7 @@ private final Logger LOGGER = LoggerFactory.getLogger(VentaController.class);
 			
 			Venta venta = ventaService.findById(ventaId);
 			mav.addObject("venta", venta);
+			mav.addObject("listItems", venta.getItems());
 			
 		} catch (BusinessException e) {
 			// TODO Auto-generated catch block
